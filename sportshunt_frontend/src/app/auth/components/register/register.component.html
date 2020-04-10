@@ -1,0 +1,79 @@
+<div class="r">
+  <div class="col-md-6 offset-md-3 mt-4">
+    <h3>Register New User</h3>
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input
+          type="text"
+          name="firstName"
+          ngModel
+          required
+          #firstName="ngModel"
+          class="form-control"
+          id="firstName"
+          placeholder="Enter First Name"
+        />
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input
+          type="text"
+          name="lastName"
+          ngModel
+          required
+          #lastName="ngModel"
+          class="form-control"
+          id="lastName"
+          placeholder="Enter Last Name"
+        />
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input
+          type="email"
+          name="emailId"
+          ngModel
+          required
+          #emailId="ngModel"
+          class="form-control"
+          id="registerEmail"
+          placeholder="Enter Email"
+        />
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <input
+          type="password"
+          name="accountPassword"
+          ngModel
+          required
+          #accountPassword="ngModel"
+          class="form-control"
+          id="registerPassword"
+          placeholder="Password"
+        />
+      </div>
+      <div class="form-group">
+        <label for="registerConfirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          name="registerConfirmPassword"
+          ngModel
+          required
+          #registerConfirmPassword="ngModel"
+          class="form-control"
+          id="registerConfirmPassword"
+          placeholder="Confirm Password"
+        />
+      </div>
+      <!-- <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+          <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div> -->
+      <button type="submit" [disabled]="f.invalid" class="btn btn-primary">
+        Register <i class="fas fa-sign-in-alt"></i>
+      </button>
+    </form>
+  </div>
+</div>
