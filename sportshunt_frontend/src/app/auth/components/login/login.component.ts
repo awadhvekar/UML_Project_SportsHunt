@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ProgressBarService } from 'src/app/shared/services/progress-bar.service';
+import { AlertService } from 'ngx-alerts';
 
 @Component({
   selector: 'app-login',
@@ -8,15 +10,30 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    public progressBar: ProgressBarService,
+    private alertService: AlertService) {}
 
   ngOnInit(): void {}
 
   onSubmit(f: NgForm) {
+    //this.alertService.info('this is an info alert');
+    this.progressBar.startLoading();
 
     const loginObserver = {
-      next: x => console.log('User Logged In API called: '),
-      error: err => console.log(err),
+      next: x => {
+        this.progressBar.setProgressBarSuccess();
+        console.log('User Logged In API called: ' + JSON.stringify(x));
+        this.progressBar.completeLoading();
+        this.alertService.success('Login Successful!');
+      },
+      error: err => {
+        this.progressBar.setProgressBarFailure();
+        console.log('Error in login: ' + JSON.stringify(err));
+        this.progressBar.completeLoading();
+        this.alertService.danger('Username and password does not match.');
+        //this.alertService.danger(err.error.response);
+      },
       
     };
 

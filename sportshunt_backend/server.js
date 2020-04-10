@@ -128,6 +128,7 @@ app.post('/login', async (request, response) => {
     //let data = {userId: request.body.userId, userPassword: request.body.userPassword};
     let queryResponseArray = [];
     let jsonObjectOutput = {};
+    let stausCode;
 
     if(!request.body.userId || !request.body.userPassword)
     {
@@ -148,6 +149,7 @@ app.post('/login', async (request, response) => {
             jsonObjectOutput['error'] = true;
             jsonObjectOutput['message'] = "Login Failed.";
             jsonObjectOutput['response'] = "userId and userPassword does not match";
+            stausCode = 400;
         }
         else
         {
@@ -155,6 +157,7 @@ app.post('/login', async (request, response) => {
             jsonObjectOutput['error'] = false;
             jsonObjectOutput['message'] = "Login Successful.";
             jsonObjectOutput['response'] = queryResponseArray;
+            stausCode = 200;
         }
     }
     catch(exception)
@@ -163,10 +166,11 @@ app.post('/login', async (request, response) => {
         jsonObjectOutput['error'] = true;
         jsonObjectOutput['message'] = "Exception occurred";
         jsonObjectOutput['response'] = exception;
+        stausCode = 400;
     }
     finally
     {
-        response.json(jsonObjectOutput);
+        response.status(stausCode).json(jsonObjectOutput);
     }
 });
 
@@ -183,6 +187,7 @@ app.post('/login', async (request, response) => {
 app.post('/register', async (request, response) => {
     let queryResponseArray = [];
     let jsonObjectOutput = {};
+    let stausCode;
 
     if(!request.body.firstName || !request.body.lastName || !request.body.emailId || !request.body.accountPassword)
     {
@@ -204,12 +209,14 @@ app.post('/register', async (request, response) => {
             jsonObjectOutput['error'] = false;
             jsonObjectOutput['message'] = "Data Insertrd.";
             jsonObjectOutput['response'] = queryResponseArray;
+            stausCode = 200;
         }
         else
         {
             jsonObjectOutput['error'] = true;
             jsonObjectOutput['message'] = "Data Insertion Failed.";
             jsonObjectOutput['response'] = "userId and userPassword does not match";
+            stausCode = 400;
 
         }
         
@@ -220,9 +227,10 @@ app.post('/register', async (request, response) => {
         jsonObjectOutput['error'] = true;
         jsonObjectOutput['message'] = "Exception occurred";
         jsonObjectOutput['response'] = exception;
+        stausCode = 400;
     }
     finally
     {
-        response.json(jsonObjectOutput);
+        response.status(stausCode).json(jsonObjectOutput);
     }
 });
