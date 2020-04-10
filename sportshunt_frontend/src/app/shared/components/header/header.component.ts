@@ -3,6 +3,7 @@ import { NgProgress } from 'ngx-progressbar';
 import { ProgressBarService } from '../../services/progress-bar.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from 'ngx-alerts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +15,8 @@ export class HeaderComponent implements OnInit {
   constructor(private progress: NgProgress,
     public progressBar: ProgressBarService,
     public authService: AuthService,
-    private alertService: AlertService ) { }
+    private alertService: AlertService,
+    private router: Router ) { }
 
   ngOnInit(): void {
     this.progressBar.progressRef = this.progress.ref('progressBar');
@@ -30,7 +32,9 @@ export class HeaderComponent implements OnInit {
     localStorage.removeItem('message');
 
     this.progressBar.completeLoading();
-    this.alertService.success("Successfully logged out of the System.")
+    this.alertService.success("Successfully logged out of the System.");
+
+    this.router.navigate(['/login']);
   }
 
 }

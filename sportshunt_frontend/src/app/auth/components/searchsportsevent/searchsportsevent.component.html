@@ -1,0 +1,44 @@
+<!-- <p>searchsportsevent works!</p> -->
+<div class="row filterRow">
+    <div class="col-md-12">
+        <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="form-inline">
+            <div class="form-group">
+                <label for="cityName"> City:</label>
+                <input name="cityName" ngModel #cityName="ngModel" type="text" class="form-control" id="cityName" placeholder="Enter City">
+            </div>
+            <div class="form-group">
+                <label for="sportsName"> Sports:</label>
+                <input name="sportsName" ngModel #sportsName="ngModel" type="text" class="form-control" id="sportsName" placeholder="Enter Sports">
+            </div>
+            <div class="form-group">
+                <label for="dateRange"> Date Range:</label>
+                <input name="dateRange" ngModel #dateRange="ngModel" type="text" class="form-control" id="dateRange" placeholder="Select Date Range">
+            </div>
+            <button type="submit" class="btn btn-primary form-control">
+                Search <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="row eventsContent">
+    <div class="col-md-12">
+        <div *ngFor="let sportsEvent of (sportsEvents || [])" class="row sportsEventClass">
+            <div class="card text-center">
+                <div class="card-header">
+                    <!-- {{sportsEvent._embedded.attractions[1].classifications[0].genre.name}} : 
+                    {{sportsEvent._embedded.attractions[1].classifications[0].subGenre.name}} -->
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{sportsEvent.name}}</h5>
+                    <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+                    <a href="{{sportsEvent.url}}" target="_blank" class="btn btn-success"
+                     title="{{sportsEvent.priceRanges[0].currency}} {{sportsEvent.priceRanges[0].min}} - {{sportsEvent.priceRanges[0].max}}">Buy Tickets</a>
+                </div>
+                <div class="card-footer text-muted">
+                    {{sportsEvent.dates.start.localDate}} {{sportsEvent.dates.start.localTime}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

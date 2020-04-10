@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ProgressBarService } from 'src/app/shared/services/progress-bar.service';
 import { AlertService } from 'ngx-alerts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ import { AlertService } from 'ngx-alerts';
 export class LoginComponent implements OnInit {
   constructor(private authService: AuthService,
     public progressBar: ProgressBarService,
-    private alertService: AlertService) {}
+    private alertService: AlertService,
+    private router: Router) {}
 
   ngOnInit(): void {}
 
@@ -26,6 +28,7 @@ export class LoginComponent implements OnInit {
         console.log('User Logged In API called: ' + JSON.stringify(x));
         this.progressBar.completeLoading();
         this.alertService.success('Login Successful!');
+        this.router.navigate(['/searchSportsEvents']);
       },
       error: err => {
         this.progressBar.setProgressBarFailure();
