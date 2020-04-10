@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ProgressBarService } from 'src/app/shared/services/progress-bar.service';
+import { AlertService } from 'ngx-alerts';
 
 @Component({
   selector: 'app-register',
@@ -8,13 +10,28 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    public progressBar: ProgressBarService,
+    private alertService: AlertService) {}
 
   ngOnInit(): void {}
   onSubmit(f: NgForm) {
+    this.progressBar.startLoading();
+    
     const registerObserver = {
-      next: x => console.log('User Registration Successful'),
-      error: err => console.log('Error in registration: ' + err),
+      next: x => {
+        this.progressBar.setProgressBarSuccess();
+        console.log('User Registration Successful');
+        this.progressBar.completeLoading();
+        this.alertService.success('User Registration Successful!');
+      },
+      error: err => {
+        this.progressBar.setProgressBarFailure();
+        console.log('Error in registration: ' + JSON.stringify(err));
+        this.progressBar.completeLoading();
+        this.alertService.danger('Error in user registration.');
+        this.alertService.danger(err.error.response.detail);
+      },
     };
     this.authService.register(f.value).subscribe(registerObserver);
   }
