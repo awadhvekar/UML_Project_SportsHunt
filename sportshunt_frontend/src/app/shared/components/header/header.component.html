@@ -2,7 +2,7 @@
 <ngx-alerts></ngx-alerts>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#"
-    ><i class="fas fa-basketball-ball"></i>Sports Hub</a
+    ><i class="fas fa-basketball-ball"></i> Sports Hub</a
   >
   <button
     class="navbar-toggler"
@@ -16,7 +16,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
-    <ul class="navbar-nav">
+    <ul class="navbar-nav ml-auto headerNav">
       <li class="nav-item active">
         <a class="nav-link" href="#"
           >Home <span class="sr-only">(current)</span></a
@@ -35,6 +35,14 @@
           >Login</a
         >
       </li>
+      <li class="nav-item dropdown" dropdown>
+        <a class="nav-link dropdown-toggle" dropdownToggle>My Profile</a>
+        <div class="dropdown-menu dropdown-menu-right" *dropdownMenu >
+          <a [routerLink]="['reset-password']" class="dropdown-item" routerLinkActive="active"><i class="fas fa-key"></i> Reset Password</a>
+          <a href="#" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </li>
+    <!--       
       <li class="nav-item dropdown">
         <a
           class="nav-link dropdown-toggle"
@@ -52,6 +60,7 @@
           <a class="dropdown-item" href="#">Soccer</a>
         </div>
       </li>
+    -->
     </ul>
   </div>
 </nav>
