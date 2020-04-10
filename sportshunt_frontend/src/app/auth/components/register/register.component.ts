@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ProgressBarService } from 'src/app/shared/services/progress-bar.service';
 import { AlertService } from 'ngx-alerts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,8 @@ import { AlertService } from 'ngx-alerts';
 export class RegisterComponent implements OnInit {
   constructor(private authService: AuthService,
     public progressBar: ProgressBarService,
-    private alertService: AlertService) {}
+    private alertService: AlertService,
+    private router: Router) {}
 
   ngOnInit(): void {}
   onSubmit(f: NgForm) {
@@ -24,7 +26,7 @@ export class RegisterComponent implements OnInit {
         console.log('User Registration Successful');
         this.progressBar.completeLoading();
         this.alertService.success('User Registration Successful!');
-        //this.router.navigate(['/login']);
+        this.router.navigate(['/login']);
 
       },
       error: err => {
