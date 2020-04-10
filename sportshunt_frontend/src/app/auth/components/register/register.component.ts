@@ -24,6 +24,8 @@ export class RegisterComponent implements OnInit {
         console.log('User Registration Successful');
         this.progressBar.completeLoading();
         this.alertService.success('User Registration Successful!');
+        //this.router.navigate(['/login']);
+
       },
       error: err => {
         this.progressBar.setProgressBarFailure();

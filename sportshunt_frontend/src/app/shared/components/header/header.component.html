@@ -22,7 +22,7 @@
           >Home <span class="sr-only">(current)</span></a
         >
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="!authService.loggedIn();">
         <a
           class="nav-link"
           [routerLink]="['register']"
@@ -30,16 +30,19 @@
           >Register</a
         >
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="!authService.loggedIn();">
         <a class="nav-link" [routerLink]="['login']" routerLinkActive="active"
           >Login</a
         >
       </li>
-      <li class="nav-item dropdown" dropdown>
-        <a class="nav-link dropdown-toggle" dropdownToggle>My Profile</a>
+      <li class="nav-item dropdown" dropdown *ngIf="authService.loggedIn();">
+        <a class="nav-link dropdown-toggle" dropdownToggle>
+          <!-- Welcome, {{authService.decodedToken?.unique_name}} -->
+          {{authService.loggedInUserName}}
+        </a>
         <div class="dropdown-menu dropdown-menu-right" *dropdownMenu >
           <a [routerLink]="['reset-password']" class="dropdown-item" routerLinkActive="active"><i class="fas fa-key"></i> Reset Password</a>
-          <a href="#" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a (click)="logout();" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
       </li>
     <!--       
