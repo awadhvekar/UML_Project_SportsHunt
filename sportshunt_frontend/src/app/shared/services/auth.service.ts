@@ -35,6 +35,8 @@
           localStorage.setItem('loggedInUserLastName', user.response[0].last_name);
           localStorage.setItem('loggedInUserEmail', user.response[0].email_id);
 
+          localStorage.setItem('loggedInUserToken', user.token);
+
           this.loggedInUserName = user.response[0].first_name + " " + user.response[0].last_name;
           this.loggedInUserEmail = user.response[0].email_id;
           this.loggedInUserId = user.response[0].user_id;
@@ -70,8 +72,9 @@
      const loggedInUserId = localStorage.getItem('loggedInUserId');
      const loggedInUserLastName = localStorage.getItem('loggedInUserLastName');
      const message = localStorage.getItem('message');
+     const token = localStorage.getItem('loggedInUserToken');
 
-     if(loggedInUserEmail==null || loggedInUserFirstName==null || loggedInUserId==null || loggedInUserLastName==null || message.toLowerCase() != "login successful.")
+     if(token == null || loggedInUserEmail==null || loggedInUserFirstName==null || loggedInUserId==null || loggedInUserLastName==null || message.toLowerCase() != "login successful.")
      {
        return false;
      }
@@ -79,5 +82,9 @@
      {
        return true;
      }
+   }
+
+   getJwtTokenFromClient(){
+     return localStorage.getItem('loggedInUserToken');
    }
 }

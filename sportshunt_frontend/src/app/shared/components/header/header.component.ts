@@ -30,6 +30,7 @@ export class HeaderComponent implements OnInit {
     localStorage.removeItem('loggedInUserId');
     localStorage.removeItem('loggedInUserLastName');
     localStorage.removeItem('message');
+    localStorage.removeItem('loggedInUserToken');
 
     this.progressBar.completeLoading();
     this.alertService.success("Successfully logged out of the System.");
