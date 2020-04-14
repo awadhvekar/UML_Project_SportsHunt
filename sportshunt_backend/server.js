@@ -3,11 +3,16 @@
 // npm install body-parser  --save
 // npm install pg --save
 // npm install cors --save
+// npm install jsonwebtoken --save
+// npm install dotenv --save
+// no requre to run, used to create random Secret key to be used in jwt: require ('crypto').randomBytes(64).toString('hex')
 
 // const path = require('path'); -> Not required
 const express = require('express');
 //const router = express.Router();
+const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const env = require('dotenv').config();
 const cors = require('cors');
 const {Client} = require('pg');
 
@@ -75,6 +80,43 @@ router.all('*', function(request, response, next){
 });
 */
 
+function authenticateJwtToken(request, response, next){
+    if(request.headers.Authorization){
+        return response.status(401).send("Unauthorized Request: header does contains Authorization field.");
+    }
+
+    // AUTHORIZATION in Header Format: "Bearer TOKEN_VALUE"
+    let authHeader = request.headers['authorization'];
+    let token = authHeader && authHeader.split(' ')[1];
+    //let token = request.headers.Authorization.split(' ')[1];
+    if(token === 'null'){
+        return response.status(401).send("Unauthorized Request: Token is null.");
+    }
+
+    let payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if(!payload){
+        return response.status(401).send("Unauthorized Request: Invalid JWT token.");
+        // send status code 403 if token is invalid
+    }
+    /*
+    console.log(payload);
+    {
+        userEmail: 'awadhvekar@gmail.com',
+        userId: 1,
+        userFirstName: 'Ashutosh',
+        userLastName: 'Wadhvekar',
+        iat: 1586819874
+    }
+    */
+
+    /*
+    console.log(payload.subject);
+    undefined
+    */
+    request.userDetails = payload;
+    next();
+}
+
 /*
     http://localhost:8000/
 */
@@ -90,7 +132,9 @@ app.listen(8000, () => {
 /*
     http://localhost:8000/getUsers
 */
-app.get('/getUsers', async (request, response) => {
+app.get('/getUsers', authenticateJwtToken, async (request, response) => {
+// app.get('/getUsers', async (request, response) => {
+    //console.log(request);
     let queryResponseArray = [];
     let jsonObjectOutput = {};
     try
@@ -129,12 +173,14 @@ app.post('/login', async (request, response) => {
     let queryResponseArray = [];
     let jsonObjectOutput = {};
     let stausCode;
+    let accessToken = null;
 
     if(!request.body.userId || !request.body.userPassword)
     {
         jsonObjectOutput['error'] = true;
         jsonObjectOutput['message'] = "Login Failed.";
         jsonObjectOutput['response'] = "userId or userPassword missing";
+        jsonObjectOutput['token'] = accessToken;
         response.status(400).json(jsonObjectOutput);
         return;
     }
@@ -149,14 +195,24 @@ app.post('/login', async (request, response) => {
             jsonObjectOutput['error'] = true;
             jsonObjectOutput['message'] = "Login Failed.";
             jsonObjectOutput['response'] = "userId and userPassword does not match";
+            jsonObjectOutput['token'] = accessToken;
             stausCode = 400;
         }
         else
         {
+            let payload = {};
+            payload['userEmail'] = results.rows[0].email_id;
+            payload['userId'] = results.rows[0].user_id;
+            payload['userFirstName'] = results.rows[0].first_name;
+            payload['userLastName'] = results.rows[0].last_name;
+            
+            accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+
             queryResponseArray = results.rows;
             jsonObjectOutput['error'] = false;
             jsonObjectOutput['message'] = "Login Successful.";
             jsonObjectOutput['response'] = queryResponseArray;
+            jsonObjectOutput['token'] = accessToken;
             stausCode = 200;
         }
     }
@@ -166,6 +222,7 @@ app.post('/login', async (request, response) => {
         jsonObjectOutput['error'] = true;
         jsonObjectOutput['message'] = "Exception occurred";
         jsonObjectOutput['response'] = exception;
+        jsonObjectOutput['token'] = accessToken;
         stausCode = 400;
     }
     finally
