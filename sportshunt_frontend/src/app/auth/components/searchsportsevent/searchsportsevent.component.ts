@@ -11,12 +11,39 @@ import { NgForm } from '@angular/forms';
 })
 export class SearchsportseventComponent implements OnInit {
 
+  minDate: Date;
+  maxDate: Date;
+  minDateEnd: Date;
+  maxDateEnd: Date;
   apiResponseData: any;
   sportsEvents: any;
 
   constructor(private http: HttpClient,
     public progressBar: ProgressBarService,
-    private alertService: AlertService) { }
+    private alertService: AlertService) { 
+      this.minDate = new Date();
+      this.minDateEnd = new Date();
+      
+      /*
+      this.maxDate = new Date(2020, 3, 16);
+      
+      this.maxDate = new Date();
+      this.maxDate.setDate(this.maxDate.getDate() + 1);
+
+      this.minDateEnd = this.maxDateEnd = new Date();
+      this.minDateEnd.setDate(this.maxDate.getDate() + 1);
+      this.maxDateEnd.setDate(this.maxDate.getDate() + 2);
+      */
+     }
+
+  /*
+  changeMinMaxEnd(): void {
+    alert("Changed!");
+    this.minDateEnd = this.maxDateEnd = new Date();
+    this.minDateEnd.setDate(this.maxDate.getDate() + 1);
+    this.maxDateEnd.setDate(this.maxDate.getDate() + 2);
+  }
+  */
 
   ngOnInit(): void {
     this.getTickeMasterSportsEvents();
@@ -27,7 +54,29 @@ export class SearchsportseventComponent implements OnInit {
     console.log(f.value.cityName);
     console.log(f.value.dateRange);
     console.log(f.value.sportsName);
+    console.log("DateRangeToIsoString: " + f.value.dateRange.toISOString());
+    console.log("DateRangeToIsoString: " + f.value.dateRangeEnd.toISOString());
     */
+
+    let newFormattedStartDate, newFormattedEndDate;
+
+    if( f.value.dateRange == null || f.value.dateRange == ""){
+      newFormattedStartDate = "";
+    }
+    else{
+      newFormattedStartDate = f.value.dateRange.toISOString();
+      newFormattedStartDate = newFormattedStartDate.substring(0, 19) + newFormattedStartDate.substring(23);
+      console.log(`Date Range Start: ${newFormattedStartDate}`);
+    }
+
+    if(f.value.dateRangeEnd == null || f.value.dateRangeEnd == ""){
+      newFormattedEndDate = "";
+    }
+    else{
+      newFormattedEndDate = f.value.dateRangeEnd.toISOString();
+      newFormattedEndDate = newFormattedEndDate.substring(0, 19) + newFormattedEndDate.substring(23);
+      console.log(`Date Range End: ${newFormattedEndDate}`);
+    }
 
     if(f.value.sportsName == null || f.value.sportsName == "")
     {
@@ -37,8 +86,8 @@ export class SearchsportseventComponent implements OnInit {
    return this.http.get("https://app.ticketmaster.com/discovery/v2/events.json?countryCode=US"
    + "&classificationName=" + f.value.sportsName
    + "&city=" + f.value.cityName 
-   // + "&startDateTime=2020-06-01T00:00:00Z" 
-   // + "&endDateTime=2020-07-31T00:00:00Z" 
+   + "&startDateTime=" + newFormattedStartDate // 2020-06-01T00:00:00Z 
+   + "&endDateTime=" + newFormattedEndDate // 2020-07-31T00:00:00Z  
    + "&sort=date,asc" 
    + "&apikey=bDUhXHdIL0p7OSyxZwsJ6LxLsrAhnIAH").subscribe(response => {
      //console.log(response["_embedded"].events);
@@ -80,7 +129,7 @@ export class SearchsportseventComponent implements OnInit {
     this.progressBar.startLoading();
     return this.http.get("https://app.ticketmaster.com/discovery/v2/events.json?countryCode=US"
     + "&classificationName=baseball"
-    // + "&city=Chicago" 
+    + "&city=Chicago" 
     // + "&startDateTime=2020-06-01T00:00:00Z" 
     // + "&endDateTime=2020-07-31T00:00:00Z" 
     + "&sort=date,asc" 
