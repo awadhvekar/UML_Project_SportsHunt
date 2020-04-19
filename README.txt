@@ -33,7 +33,7 @@ Elasticsearch:
                 {
                     "match": 
                     {
-                    "ticketmaster_event_id": "ticketMasterEventId1"
+                        "ticketmaster_event_id": "ticketMasterEventId1"
                     }
                 }
             }
