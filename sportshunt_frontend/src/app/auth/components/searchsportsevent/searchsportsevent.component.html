@@ -45,14 +45,14 @@
                 {{sportsEvent._embedded.attractions[1].classifications[0].subGenre.name}} -->
             </div>
             <div class="card-body">
-                <h5 class="card-title">{{sportsEvent.name}}</h5>
+                <h5 class="card-title">{{sportsEvent?.name}}</h5>
                 <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
-                <a href="{{sportsEvent.url}}" target="_blank"
-                    title="{{sportsEvent.priceRanges[0].currency}} {{sportsEvent.priceRanges[0].min}} - {{sportsEvent.priceRanges[0].max}}">TicketMaster Deals</a>
+                <a href="{{sportsEvent?.url}}" target="_blank"
+                    *ngIf="sportsEvent?.priceRanges" title="{{sportsEvent?.priceRanges[0]?.currency}} {{sportsEvent?.priceRanges[0]?.min}} - {{sportsEvent?.priceRanges[0]?.max}}">TicketMaster Deals</a>
                     <!-- class="btn btn-success" -->
             </div>
             <div class="card-footer text-muted">
-                {{sportsEvent.dates.start.localDate}} {{sportsEvent.dates.start.localTime}}
+                {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}
             </div>
         </div>
     </div>

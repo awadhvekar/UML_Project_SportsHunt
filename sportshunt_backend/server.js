@@ -5,6 +5,7 @@
 // npm install cors --save
 // npm install jsonwebtoken --save
 // npm install dotenv --save
+// npm install elasticsearch --save
 // no requre to run, used to create random Secret key to be used in jwt: require ('crypto').randomBytes(64).toString('hex')
 
 // const path = require('path'); -> Not required
@@ -14,7 +15,48 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const env = require('dotenv').config();
 const cors = require('cors');
+const elasticsearch = require('elasticsearch');
 const {Client} = require('pg');
+
+const esClient = new elasticsearch.Client({
+    host: "localhost:9200",
+    log: 'error'
+});
+
+esClient.ping({
+        requestTimeout: 1000
+    },
+    function (error) {
+        if (error) {
+            console.log("Elasticsearch cluster is down! Error: " + error);
+        }
+        else {
+            console.log("Elasticsearch is up and running");
+        }
+    }
+);
+
+const insertedDoc = async function(ticketMasterEventId, userId, userName, eventRating, reviewComment) {
+    return await esClient.index({
+        index: "sportshunt_elastic_search",
+        type: "sports_events_review",
+        body: {
+            ticketmaster_event_id: ticketMasterEventId,
+            user_id: userId,
+            user_name: userName,
+            event_ratings: eventRating,
+            review_comment: reviewComment
+        }
+    });
+}
+
+const searchDoc = async function(searchBody){
+    return await esClient.search({
+        index: "sportshunt_elastic_search",
+        type: "sports_events_review",
+        body: searchBody
+    });
+}
 
 const pgDbCon = new Client({
     user: "postgres",
@@ -281,6 +323,359 @@ app.post('/register', async (request, response) => {
     catch(exception)
     {
         console.log("Exception occurred while running '/register' API: " + exception);
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Exception occurred";
+        jsonObjectOutput['response'] = exception;
+        stausCode = 400;
+    }
+    finally
+    {
+        response.status(stausCode).json(jsonObjectOutput);
+    }
+});
+
+/*
+    http://localhost:8000/addOrder
+
+    {
+        "ticketMasterEventId":"firstName2",
+        "eventName":"lastName2",
+        "eventCity":"emailId2",
+        "eventDate":"accountPassword2",
+        "eventSportsName":"accountPassword2"
+    }
+*/
+app.post('/addOrder', authenticateJwtToken, async(request, response) => {
+    let queryResponseArray = [];
+    let jsonObjectOutput = {};
+    let stausCode;
+    let userId;
+
+    userId = request.userDetails.userId;
+    //console.log("User Id: " + request.userDetails.userId);
+
+    if(!request.body.eventName){
+        request.body.eventName = null;
+    }
+
+    if(!request.body.eventCity){
+        request.body.eventCity = null;
+    }
+
+    if(!request.body.eventDate){
+        request.body.eventDate = null;
+    }
+
+    if(!request.body.eventSportsName){
+        request.body.eventSportsName = null;
+    }
+
+    if(!request.body.ticketMasterEventId)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Order Insertion Failed.";
+        jsonObjectOutput['response'] = "userId or ticketMasterEventId missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    try
+    {
+        /*
+            await pgDbCon.connect();
+            await pgDbCon.query("BEGIN");
+            await pgDbCon.query("INSERT / UPDATE / DELETE query");
+            await pgDbCon.query("COMMIT");
+        */
+        const results = await pgDbCon.query("INSERT INTO ticket_orders (user_id, event_name, ticketmaster_event_id, order_city, order_date, order_sports_name)"
+         + " VALUES ($1, $2, $3, $4, $5, $6) RETURNING order_id",
+        [userId, request.body.eventName, request.body.ticketMasterEventId, request.body.eventCity, request.body.eventDate, request.body.eventSportsName]);
+        
+        if(results.rowCount == 1 && results.command.toUpperCase() == 'INSERT')
+        {
+            //console.log(results.rows[0].order_id);
+            queryResponseArray = results.rows;
+            jsonObjectOutput['error'] = false;
+            jsonObjectOutput['message'] = "Data Insertrd. Last Interted Id/ PK: " + results.rows[0].order_id;
+            jsonObjectOutput['response'] = queryResponseArray;
+            stausCode = 200;
+        }
+        else
+        {
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "Data Insertion Failed.";
+            jsonObjectOutput['response'] = "Error: " + results;
+            stausCode = 400;
+
+        }
+    }
+    catch(exception)
+    {
+        console.log(`Exception occurred while running '/addOrder' API: ${exception}`);
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Exception occurred";
+        jsonObjectOutput['response'] = exception;
+        stausCode = 400;
+    }
+    finally
+    {
+        response.status(stausCode).json(jsonObjectOutput);
+    }
+});
+
+/*
+    http://localhost:8000/makePayment
+
+    {
+        "orderId":"firstName2",
+        "numberOfTickets":"lastName2",
+        "totalPrice":"emailId2",
+        "creditCardNumber":"accountPassword2",
+        "address":"accountPassword2"
+    }
+*/
+app.post('/makePayment', authenticateJwtToken, async(request, response) => {
+    let queryResponseArray = [];
+    let jsonObjectOutput = {};
+    let stausCode;
+    let userId;
+
+    userId = request.userDetails.userId;
+    //console.log("User Id: " + request.userDetails.userId);
+
+    if(!request.body.numberOfTickets){
+        request.body.numberOfTickets = 1;
+    }
+
+    if(!request.body.orderId)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Payment Insertion Failed.";
+        jsonObjectOutput['response'] = "orderId missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    if(!request.body.totalPrice || !request.body.creditCardNumber || !request.body.address)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Payment Insertion Failed.";
+        jsonObjectOutput['response'] = "totalPrice / creditCardNumber / address missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    try
+    {
+        /*
+            await pgDbCon.connect();
+            await pgDbCon.query("BEGIN");
+            await pgDbCon.query("INSERT / UPDATE / DELETE query");
+            await pgDbCon.query("COMMIT");
+            await pgDbCon.query("ROLLBACK");
+        */
+
+        // await pgDbCon.query("BEGIN");
+        const retrievedUserResult = await pgDbCon.query("SELECT user_id from ticket_orders WHERE order_id = $1", [request.body.orderId]);
+        
+        if(retrievedUserResult.rows[0].user_id == userId)
+        {
+            const results = await pgDbCon.query("INSERT INTO ticket_payments (user_id, order_id, number_of_tickets, total_price, credit_card_number, address) "
+            + "VALUES ($1, $2, $3, $4, $5, $6) RETURNING payment_id",
+            [userId, request.body.orderId, request.body.numberOfTickets, request.body.totalPrice, request.body.creditCardNumber, request.body.address]);
+            
+            if(results.rowCount == 1 && results.command.toUpperCase() == 'INSERT')
+            {
+                // await pgDbCon.query("COMMIT");
+                // console.log(results.rows[0].payment_id);
+                queryResponseArray = results.rows;
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "Data Insertrd. Last Interted Payment Id/ PK: " + results.rows[0].payment_id;
+                jsonObjectOutput['response'] = queryResponseArray;
+                stausCode = 200;
+            }
+            else
+            {
+                // await pgDbCon.query("ROLLBACK");
+                jsonObjectOutput['error'] = true;
+                jsonObjectOutput['message'] = "Data Insertion Failed.";
+                jsonObjectOutput['response'] = "Error: " + results;
+                stausCode = 400;
+
+            }
+            
+        }
+        else
+        {
+            // await pgDbCon.query("ROLLBACK");
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "Data Insertion Failed.";
+            jsonObjectOutput['response'] = "Error: orderId does not belong to logged in user";
+            stausCode = 400;
+        }
+    }
+    catch(exception)
+    {
+        console.log(`Exception occurred while running '/makePayment' API: ${exception}`);
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Exception occurred";
+        jsonObjectOutput['response'] = exception;
+        stausCode = 400;
+    }
+    finally
+    {
+        response.status(stausCode).json(jsonObjectOutput);
+    }
+});
+
+/*
+    http://localhost:8000/addEventReview
+
+    {
+        "ticketMasterEventId":"firstName2",
+        "eventRating":"accountPassword2",
+        "reviewComment":"accountPassword2"
+    }
+*/
+app.post('/addEventReview', authenticateJwtToken, async(request, response) => {
+    let queryResponseArray = [];
+    let jsonObjectOutput = {};
+    let stausCode;
+    let userId;
+    let userName;
+
+    userId = request.userDetails.userId;
+    userName = request.userDetails.userFirstName + " " + request.userDetails.userLastName;
+    //console.log("User Id: " + request.userDetails.userId);
+
+    if(!request.body.ticketMasterEventId)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Order Insertion Failed.";
+        jsonObjectOutput['response'] = "ticketMasterEventId missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    if(!request.body.eventRating)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Order Insertion Failed.";
+        jsonObjectOutput['response'] = "eventRating missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    if(!request.body.reviewComment)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Order Insertion Failed.";
+        jsonObjectOutput['response'] = "reviewComment missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    try
+    {
+        const results = await insertedDoc(request.body.ticketMasterEventId, userId, userName, request.body.eventRating, request.body.reviewComment);
+        
+        if(results._version == 1 && results.result.toUpperCase() == 'CREATED')
+        {
+            queryResponseArray = results._id;
+            jsonObjectOutput['error'] = false;
+            jsonObjectOutput['message'] = "Review Insertrd. Last Interted Id: " + results._id;
+            jsonObjectOutput['response'] = queryResponseArray;
+            stausCode = 200;
+        }
+        else
+        {
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "Review Insertion Failed.";
+            jsonObjectOutput['response'] = "Error: " + results;
+            stausCode = 400;
+
+        }
+    }
+    catch(exception)
+    {
+        console.log(`Exception occurred while running '/addEventReview' API: ${exception}`);
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Exception occurred";
+        jsonObjectOutput['response'] = exception;
+        stausCode = 400;
+    }
+    finally
+    {
+        response.status(stausCode).json(jsonObjectOutput);
+    }
+});
+
+/*
+    http://localhost:8000/addEventReview
+
+    {
+        "ticketMasterEventId":"firstName2"
+    }
+*/
+app.post('/viewEventReview', authenticateJwtToken, async(request, response) => {
+    let queryResponseArray = [];
+    let jsonObjectOutput = {};
+    let stausCode;
+    let userId;
+    let userName;
+
+    userId = request.userDetails.userId;
+
+    if(!request.body.ticketMasterEventId)
+    {
+        jsonObjectOutput['error'] = true;
+        jsonObjectOutput['message'] = "Order Insertion Failed.";
+        jsonObjectOutput['response'] = "ticketMasterEventId missing";
+        response.status(400).json(jsonObjectOutput);
+        return;
+    }
+
+    try
+    {
+        let searchFilter = {
+                                "query": 
+                                {
+                                    "bool": 
+                                    {
+                                        "must": 
+                                        {
+                                            "match": 
+                                            {
+                                                "ticketmaster_event_id": request.body.ticketMasterEventId
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+        const results = await searchDoc(searchFilter);
+        
+        if(results.hits.total.value > 0)
+        {
+            //console.log(results.rows[0].order_id);
+            queryResponseArray = results.hits.hits;
+            jsonObjectOutput['error'] = false;
+            jsonObjectOutput['message'] = "Review extracted.";
+            jsonObjectOutput['response'] = queryResponseArray;
+            stausCode = 200;
+        }
+        else
+        {
+            jsonObjectOutput['error'] = false;
+            jsonObjectOutput['message'] = "No Reviews present.";
+            jsonObjectOutput['response'] = "No Reviews present for this event";
+            stausCode = 200;
+
+        }
+    }
+    catch(exception)
+    {
+        console.log(`Exception occurred while running '/viewEventReview' API: ${exception}`);
         jsonObjectOutput['error'] = true;
         jsonObjectOutput['message'] = "Exception occurred";
         jsonObjectOutput['response'] = exception;
