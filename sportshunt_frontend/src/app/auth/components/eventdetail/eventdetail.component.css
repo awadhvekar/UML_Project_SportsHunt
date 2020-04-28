@@ -1,0 +1,48 @@
+.sportsEventLogoImg{
+    height: 5em;
+    width: 10em;
+}
+
+.form-group{
+    padding: 2%;
+}
+
+.sportsEventClass{
+    padding: 2%;
+}
+
+.card{
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    width: 100%;
+}
+
+#map {
+    height: 200px;
+    width: 100%;
+}
+
+.reviewsSection{
+    align-content: left;
+    text-align: left;
+}
+
+.reviewDifferencatorLine{
+    /* padding: 2px;
+    height: 5px;
+    color: black; */
+}
+
+.reviewerName{
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.reviewerComment{
+    font-weight: lighter;
+    font-size: 14px;
+}
+
+.reviewerRating{
+    font-weight: lighter;
+    font-size: 14px;
+}
