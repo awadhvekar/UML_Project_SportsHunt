@@ -46,10 +46,13 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{sportsEvent?.name}}</h5>
-                <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
-                <a href="{{sportsEvent?.url}}" target="_blank"
+                <div>
+                    <a href="{{sportsEvent?.url}}" target="_blank"
                     *ngIf="sportsEvent?.priceRanges" title="{{sportsEvent?.priceRanges[0]?.currency}} {{sportsEvent?.priceRanges[0]?.min}} - {{sportsEvent?.priceRanges[0]?.max}}">TicketMaster Deals</a>
-                    <!-- class="btn btn-success" -->
+                </div>
+                <div>
+                    <a href="http://localhost:4200/eventDetail/{{sportsEvent?.id}}" class="btn btn-success">Buy Tickets</a>
+                </div>
             </div>
             <div class="card-footer text-muted">
                 {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}

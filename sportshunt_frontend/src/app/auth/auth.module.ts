@@ -12,12 +12,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 // import { from } from 'rxjs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { EventdetailComponent } from './components/eventdetail/eventdetail.component';
 
 @NgModule({
   declarations: [LoginComponent,
     RegisterComponent,
     SearchsportseventComponent,
-    ProtecteduserlistComponent
+    ProtecteduserlistComponent,
+    EventdetailComponent
   ],
   imports: [CommonModule,
     AuthRoutingModule,
