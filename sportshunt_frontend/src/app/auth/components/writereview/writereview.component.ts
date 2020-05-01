@@ -1,18 +1,19 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AlertService } from 'ngx-alerts';
 import { ProgressBarService } from 'src/app/shared/services/progress-bar.service';
-import { NgForm } from '@angular/forms';
+import { AlertService } from 'ngx-alerts';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { NgForm } from '@angular/forms';
 import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-eventdetail',
-  templateUrl: './eventdetail.component.html',
-  styleUrls: ['./eventdetail.component.css']
+  selector: 'app-writereview',
+  templateUrl: './writereview.component.html',
+  styleUrls: ['./writereview.component.css']
 })
-export class EventdetailComponent implements OnInit, AfterViewInit {
+export class WritereviewComponent implements OnInit, AfterViewInit {
+
   // google: any;
   eventId: any;
   apiUrl: any;
@@ -27,7 +28,7 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
   eventDateTime: any;
   eventSportsTypeName: any;
   eventReviews: any;
-  placeSelected: Place;
+  currentRate = 0;
   @ViewChild('mapContainer', {static: false}) gmap:ElementRef;
   map: google.maps.Map;
   lat = 41.8308761;
@@ -44,18 +45,6 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
     map: this.map,
   });
 
-  icon = {
-    url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-    scaledSize: {
-      width: 60,
-      height: 60
-    }
-  }
-
-  clickedMarker(label: string, index: number) {
-    console.log(`clicked the marker: ${label || index}`)
-  }
-
   constructor(private activatedRoute: ActivatedRoute,
     private http: HttpClient,
     public progressBar: ProgressBarService,
@@ -66,11 +55,12 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
     config: NgbRatingConfig) {
       config.max = 5;
     }
-  ngAfterViewInit(): void {
-    // this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#fff';
-    // this.elementRef.nativeElement.ownerDocument.body.style.backgroundImage = '/assets/images/sportshunt_background.jpg';
-    this.mapInitializer();
-  }
+
+    ngAfterViewInit(): void {
+      // this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#fff';
+      // this.elementRef.nativeElement.ownerDocument.body.style.backgroundImage = '/assets/images/sportshunt_background.jpg';
+      this.mapInitializer();
+    }
 
   ngOnInit(): void {
     this.getEventDetailApi();
@@ -80,24 +70,22 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
   onSubmit(f: NgForm) {
     this.progressBar.startLoading();
     
-    const addOrderMakePaymentApiObserver = {
+    const addReviewObserver = {
       next: x => {
         this.progressBar.setProgressBarSuccess();
-        console.log('Payment Successful');
         this.progressBar.completeLoading();
-        this.alertService.success('Payment Successful!');
+        this.alertService.success('Review Posted!');
         this.router.navigate(['/myEvents']);
 
       },
       error: err => {
         this.progressBar.setProgressBarFailure();
-        console.log('Error in Payment: ' + JSON.stringify(err));
+        console.log('Error in Posting a review: ' + JSON.stringify(err));
         this.progressBar.completeLoading();
-        this.alertService.danger('Payment not done. Please try again.');
-        this.alertService.danger(err.error.response.detail);
+        this.alertService.danger('Error in Posting a review. Please try again.');
       },
     };
-    this.authService.addOrderMakePaymentApi(f.value).subscribe(addOrderMakePaymentApiObserver);
+    this.authService.addEventReviewApi(f.value).subscribe(addReviewObserver);
   }
 
   mapInitializer() {
@@ -126,7 +114,7 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
       else{
         this.eventReviews.push({"user_name": "No reviews Present","event_ratings": "","review_comment": "No reviews"});
       }
-      // console.log("eventReviews Array: " + JSON.stringify(this.eventReviews));
+      console.log("eventReviews Array: " + JSON.stringify(this.eventReviews));
       this.progressBar.setProgressBarSuccess();
       this.progressBar.completeLoading();
       this.alertService.success('Event Reviews fetched.');
@@ -171,9 +159,6 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
       // console.log("Lat: " + this.sportsEvent['_embedded'].venues[0].location.latitude);
       this.lat = this.sportsEvent['_embedded'].venues[0].location.latitude;
       this.lng = this.sportsEvent['_embedded'].venues[0].location.longitude;
-      this.sportsEvent['stadiumLat'] = this.sportsEvent['_embedded'].venues[0].location.latitude;
-      this.sportsEvent['stadiumLng'] = this.sportsEvent['_embedded'].venues[0].location.longitude;
-      this.placeSelected = {latitude: Number(this.lat), longitude: Number(this.lng), zoom: 13};
       this.eventCityName = this.sportsEvent['_embedded'].venues[0].city.name;
       this.eventSportsTypeName = this.sportsEvent.classifications[0].genre.name;
       this.eventDateTime = this.sportsEvent.dates.start.dateTime;
@@ -223,10 +208,5 @@ export class EventdetailComponent implements OnInit, AfterViewInit {
    this.numberOfTicket = numberOfTicket;
    this.totalTicketPrice = this.ticketPrice * this.numberOfTicket;
  }
-}
 
-interface Place {
-  latitude: Number;    
-  longitude: Number;
-  zoom: Number;
 }

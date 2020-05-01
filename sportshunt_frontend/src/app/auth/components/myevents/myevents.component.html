@@ -1,0 +1,93 @@
+<!-- <p *ngFor="let userEvent of (userEventsArray || [])">
+    {{userEvent.event_name}}
+</p> -->
+<table datatable [dtOptions]="dtOptions" class="table table-hover table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <!-- <th scope="col">#</th> -->
+        <th scope="col">Event Name</th>
+        <th scope="col">Sports Name</th>
+        <th scope="col">City</th>
+        <th scope="col">Number of Tickets</th>
+        <th scope="col">Total Price</th>
+        <th scope="col">Reviews</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let userEvent of (userEventsArray || [])">
+        <th scope="row">{{userEvent.event_name}}</th>
+        <td>{{userEvent.order_sports_name}}</td>
+        <td>{{userEvent.order_city}}</td>
+        <td>{{userEvent.number_of_tickets}}</td>
+        <td>$ {{userEvent.total_price}}</td>
+        <td><a href="writeReview/{{userEvent.ticketmaster_event_id}}" class="btn btn-sm" title="Write Review"><i class="fas fa-edit"></i></a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h5>Recommended Sports</h5>
+
+  <!-- <div class="row eventsContent">
+    <div *ngFor="let sportsEvent of (sportsEvents || [])" class="col-md-6 sportsEventClass">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">{{sportsEvent?.name}}</h5>
+        </div>
+        <div class="card-body">
+          <div>
+              <a href="{{sportsEvent?.url}}" target="_blank"
+              *ngIf="sportsEvent?.priceRanges" title="{{sportsEvent?.priceRanges[0]?.currency}} {{sportsEvent?.priceRanges[0]?.min}} - {{sportsEvent?.priceRanges[0]?.max}}">TicketMaster Deals</a>
+          </div>
+          <div>
+              <a href="http://localhost:4200/eventDetail/{{sportsEvent?.id}}" class="btn btn-success">Buy Tickets</a>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+                {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="row eventsContent">
+    <div class="col-md-6 sportsEventClass">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">{{sportsEvents[0]?.name}}</h5>
+        </div>
+        <div class="card-body">
+          <div>
+              <a href="{{sportsEvents[0]?.url}}" target="_blank"
+              *ngIf="sportsEvents[0]?.priceRanges" title="{{sportsEvents[0]?.priceRanges[0]?.currency}} {{sportsEvents[0]?.priceRanges[0]?.min}} - {{sportsEvents[0]?.priceRanges[0]?.max}}">TicketMaster Deals</a>
+          </div>
+          <div>
+              <a href="http://localhost:4200/eventDetail/{{sportsEvents[0]?.id}}" class="btn btn-success">Buy Tickets</a>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+                {{sportsEvents[0]?.dates?.start?.localDate}} {{sportsEvents[0]?.dates?.start?.localTime}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 sportsEventClass">
+      <div class="card text-center">
+        <div class="card-header">
+          <h5 class="card-title">{{sportsEvents[1]?.name}}</h5>
+        </div>
+        <div class="card-body">
+          <div>
+              <a href="{{sportsEvents[1]?.url}}" target="_blank"
+              *ngIf="sportsEvents[1]?.priceRanges" title="{{sportsEvents[1]?.priceRanges[0]?.currency}} {{sportsEvents[1]?.priceRanges[0]?.min}} - {{sportsEvents[0]?.priceRanges[0]?.max}}">TicketMaster Deals</a>
+          </div>
+          <div>
+              <a href="http://localhost:4200/eventDetail/{{sportsEvents[1]?.id}}" class="btn btn-success">Buy Tickets</a>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+                {{sportsEvents[1]?.dates?.start?.localDate}} {{sportsEvents[1]?.dates?.start?.localTime}}
+        </div>
+      </div>
+    </div>
+  </div>
