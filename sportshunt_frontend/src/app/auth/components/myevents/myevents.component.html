@@ -1,7 +1,7 @@
 <!-- <p *ngFor="let userEvent of (userEventsArray || [])">
     {{userEvent.event_name}}
 </p> -->
-<table datatable [dtOptions]="dtOptions" class="table table-hover table-striped table-bordered">
+<table id="myEventsTable" datatable [dtOptions]="dtOptions" class="table table-hover table-striped table-bordered">
     <thead class="thead-dark">
       <tr>
         <!-- <th scope="col">#</th> -->
@@ -27,8 +27,6 @@
 
   <hr>
 
-  <h5>Recommended Sports</h5>
-
   <!-- <div class="row eventsContent">
     <div *ngFor="let sportsEvent of (sportsEvents || [])" class="col-md-6 sportsEventClass">
       <div class="card text-center">
@@ -52,6 +50,7 @@
   </div> -->
 
   <div class="row eventsContent">
+    <div class="col-md-12"><h5>Recommended Sports Events</h5></div>
     <div class="col-md-6 sportsEventClass">
       <div class="card text-center">
         <div class="card-header">

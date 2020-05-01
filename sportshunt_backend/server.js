@@ -969,3 +969,52 @@ http://localhost:8000/getDivvyDockingStationsInfo
             response.status(stausCode).json(jsonObjectOutput);
         }
     });
+
+/*
+    http://localhost:8000/getRecommendedCityAndSports
+*/
+app.get('/getRecommendedCityAndSports', authenticateJwtToken, async (request, response) => {
+        let userId;
+        let queryResponseArray = [];
+        let jsonObjectOutput = {};
+
+        userId = request.userDetails.userId;
+
+        try
+        {
+            const sportsNameResults = await pgDbCon.query("SELECT order_sports_name FROM (SELECT order_sports_name, COUNT(*) as cnt, ROW_NUMBER() OVER (PARTITION BY order_sports_name ORDER BY COUNT(*) DESC) as seqnum FROM ticket_orders WHERE user_id = $1 GROUP BY order_sports_name) ct WHERE seqnum = 1;", [userId]);
+            const cityNameResults = await pgDbCon.query("SELECT order_city FROM (SELECT order_city, COUNT(*) as cnt, ROW_NUMBER() OVER (PARTITION BY order_city ORDER BY COUNT(*) DESC) as seqnum FROM ticket_orders WHERE user_id = $1 GROUP BY order_city) ct WHERE seqnum = 1;", [userId]);
+    
+            if(sportsNameResults.rowCount > 0 && cityNameResults.rowCount > 0)
+            {
+                recomendedSports = sportsNameResults.rows[0].order_sports_name;
+                recomendedCity = cityNameResults.rows[0].order_city;
+                queryResponseArray.push({recomendedSports: recomendedSports});
+                queryResponseArray.push({recomendedCity: recomendedCity});
+
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "City and Sports suggested.";
+                jsonObjectOutput['response'] = queryResponseArray;
+            }
+            else
+            {
+                queryResponseArray.push({recomendedSports: "No suggestions"});
+                queryResponseArray.push({recomendedCity: "No suggestions"});
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "No suggestions";
+                jsonObjectOutput['response'] = queryResponseArray;
+            }
+
+        }
+        catch(exception)
+        {
+            console.log("Exception occurred while running '/getUserEvents' API: " + exception);
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "All User Events";
+            jsonObjectOutput['response'] = exception;
+        }
+        finally
+        {
+            response.json(jsonObjectOutput);
+        }
+    });
