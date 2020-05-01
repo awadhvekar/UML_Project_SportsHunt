@@ -9,10 +9,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthguardGuard } from './shared/authguard.guard';
 import { TokenInterceptorService } from './shared/services/token-interceptor.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, AuthModule, HttpClientModule, BrowserAnimationsModule],
+  imports: [BrowserModule, AppRoutingModule, SharedModule, AuthModule, HttpClientModule, BrowserAnimationsModule, NgbModule],
   providers: [AuthguardGuard, {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptorService,

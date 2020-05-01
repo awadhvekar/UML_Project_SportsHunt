@@ -13,24 +13,40 @@ import { MatNativeDateModule } from '@angular/material/core';
 // import { from } from 'rxjs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { EventdetailComponent } from './components/eventdetail/eventdetail.component';
+import { MyeventsComponent } from './components/myevents/myevents.component';
+import { DataTablesModule } from 'angular-datatables';
+import { WritereviewComponent } from './components/writereview/writereview.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChicagoDivvyStationsComponent } from './components/chicago-divvy-stations/chicago-divvy-stations.component';
+import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 
 @NgModule({
   declarations: [LoginComponent,
     RegisterComponent,
     SearchsportseventComponent,
     ProtecteduserlistComponent,
-    EventdetailComponent
+    EventdetailComponent,
+    MyeventsComponent,
+    WritereviewComponent,
+    ChicagoDivvyStationsComponent
   ],
   imports: [CommonModule,
     AuthRoutingModule,
     FormsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    DataTablesModule,
+    NgbModule,
+    NgbPaginationModule,
+    NgbAlertModule,
+    AgmCoreModule.forRoot({apiKey: 'AIzaSyDdMHt-mrO06qcH0_4nIVhTLnk6-UNgC20'+ '&libraries=visualization'})
   ],
   exports: [LoginComponent,
     RegisterComponent,
     SearchsportseventComponent
   ],
+  providers: [GoogleMapsAPIWrapper]
 })
 export class AuthModule {}

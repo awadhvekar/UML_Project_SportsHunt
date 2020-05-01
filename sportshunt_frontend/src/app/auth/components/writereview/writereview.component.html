@@ -1,0 +1,92 @@
+<!-- *ngIf="{{sportsEvent?.classifications[0]?.subGenre}}" -->
+<!-- <img class="img-thumbnail" src='/assets/images/{{sportsEvent.img}}' height='100px' width='200px'> -->
+<!-- <img class="img-thumbnail" src='/assets/images/MLB_logo.png' height='100px' width='200px'>
+<img class="img-thumbnail" src='/assets/images/NBA_logo.png' height='100px' width='200px'>
+<img class="img-thumbnail" src='/assets/images/NFL_logo.png' height='100px' width='200px'> -->
+<div class="row eventsContent">
+    <div class="col-md-12 sportsEventClass">
+        <div class="card text-center">
+            <div class="card-header">
+                <img class="img-thumbnail sportsEventLogoImg" src="{{sportsEvent?.img}}">
+                <h6>{{sportsEvent?.classifications[0]?.subGenre?.name}} : {{sportsEvent?.classifications[0]?.genre.name}}</h6>
+                <h5 class="card-title">{{sportsEvent?.name}}</h5>
+            </div>
+            <div class="card-body">
+                <!-- 
+                <a href="{{sportsEvent?.url}}" target="_blank"
+                    *ngIf="sportsEvent?.priceRanges" title="{{sportsEvent?.priceRanges[0]?.currency}} {{sportsEvent?.priceRanges[0]?.min}} - {{sportsEvent?.priceRanges[0]?.max}}">TicketMaster Deals</a>
+                <a href="http://localhost:4200/eventDetail/{{sportsEvent?.id}}" class="btn btn-success">Buy Tickets</a>
+                 -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Venue: </label>
+                                <span> {{sportsEvent?.venueName}}, {{sportsEvent?.venueAddress}}</span>
+                            </div>
+                            <div class="col-md-12">
+                                <label>Time: </label>
+                                <span> {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}</span>
+                            </div>
+                            <div #mapContainer id="map"></div>
+                            <hr>
+                            <div class="col-md-12">
+                                Event Rating & Reviews:
+                                <div *ngFor="let eventReview of (eventReviews || [])" class="row reviewsSection">
+                                    <div class="col-md-3 reviewerName">{{eventReview?.user_name}}</div>
+                                    <!-- <div class="col-md-3 reviewerRating">{{eventReview?.event_ratings}}</div> -->
+                                    <div class="col-md-3 reviewerRating">
+                                        <ngb-rating [readonly]="true" [rate]="eventReview?.event_ratings">
+                                            <ng-template let-fill="fill" let-index="index1">
+                                              <span class="star1" [class.filled]="fill === 100">&#9733;</span>
+                                            </ng-template>
+                                        </ngb-rating>
+                                    </div>
+                                    <div class="col-md-6 reviewerComment">{{eventReview?.review_comment}}</div>
+                                    <hr class="reviewDifferencatorLine">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+                            <!--                             
+                            <div class="form-group">
+                                <label for="eventRating">Event Rating</label>
+                                <select id="eventRating" name="eventRating" class="form-control" #eventRating="ngModel" ngModel required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                             -->
+
+                            <div class="form-group">
+                                <label for="eventRating">Event Rating</label><br/>
+                                <input type="hidden" id="eventRating" name="eventRating" #eventRating="ngModel" [(ngModel)]="currentRate">
+                                <ngb-rating [(rate)]="currentRate" [max]="5">
+                                    <ng-template let-fill="fill" let-index="index">
+                                        <span class="star" [class.filled]="fill === 100" [class.bad]="index == 0" [class.nottoobad]="index == 1" [class.okay]="index == 2" [class.toogood]="index == 4">&#9733;</span>
+                                    </ng-template>
+                                </ngb-rating>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reviewComment">Comment:</label>
+                                <textarea class="form-control" id="reviewComment" name="reviewComment" #reviewComment="ngModel" ngModel required rows="5"></textarea>
+                            </div>
+                            <input type="hidden" id="ticketMasterEventId" name="ticketMasterEventId" #ticketMasterEventId="ngModel" [(ngModel)]="sportsEvent.id">
+                            <button type="submit" [disabled]="f.invalid" class="btn btn-success">Post Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <!-- {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}} -->
+                <a href="{{sportsEvent?.url}}" target="_blank">TicketMaster Deals</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -855,3 +855,117 @@ app.post('/viewEventReview', authenticateJwtToken, async(request, response) => {
         response.status(stausCode).json(jsonObjectOutput);
     }
 });
+
+/*
+    http://localhost:8000/getUserEvents
+*/
+app.get('/getUserEvents', authenticateJwtToken, async (request, response) => {
+    // app.get('/getUsers', async (request, response) => {
+        //console.log(request);
+        let userId;
+        let queryResponseArray = [];
+        let jsonObjectOutput = {};
+
+        userId = request.userDetails.userId;
+
+        try
+        {
+            const results = await pgDbCon.query("SELECT ord.order_id, ord.event_name, ord.ticket_price, ord.ticketmaster_event_id, "
+            + "ord.order_sports_name,ord.order_city, pay.payment_id, pay.number_of_tickets, pay.total_price "
+            + "FROM ticket_orders ord JOIN ticket_payments pay ON ord.order_id = pay.order_id WHERE ord.user_id = $1", [userId]);
+            //console.log(results);
+    
+            if(results.rowCount > 0)
+            {
+                queryResponseArray = results.rows;
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "All User Events";
+                jsonObjectOutput['response'] = queryResponseArray;
+            }
+            else
+            {
+                queryResponseArray = results.rows;
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "No events.";
+                jsonObjectOutput['response'] = queryResponseArray;
+            }
+
+        }
+        catch(exception)
+        {
+            console.log("Exception occurred while running '/getUserEvents' API: " + exception);
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "All User Events";
+            jsonObjectOutput['response'] = exception;
+        }
+        finally
+        {
+            response.json(jsonObjectOutput);
+        }
+    });
+
+
+/*
+http://localhost:8000/getDivvyDockingStationsInfo
+
+{
+    "location_lat":"firstName2",
+    "location_lng":"firstName2"
+}
+*/
+    app.post('/getDivvyDockingStationsInfo', authenticateJwtToken, async(request, response) => {
+        let queryResponseArray = [];
+        let jsonObjectOutput = {};
+        let stausCode;
+    
+        if(!request.body.location_lat || !request.body.location_lng)
+        {
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "Order Insertion Failed.";
+            jsonObjectOutput['response'] = "location_lat or location_lng missing";
+            response.status(400).json(jsonObjectOutput);
+            return;
+        }
+    
+        try
+        {
+            /*
+                await pgDbCon.connect();
+                await pgDbCon.query("BEGIN");
+                await pgDbCon.query("INSERT / UPDATE / DELETE query");
+                await pgDbCon.query("COMMIT");
+            */
+            const results = await pgDbCon.query("SELECT * FROM divvy_stations_realtime_status ORDER BY (divvy_stations_realtime_status.where_is <-> ST_POINT($1, $2)) LIMIT 3",
+            [request.body.location_lat, request.body.location_lng]);
+            
+            if(results.rowCount > 0 && results.command.toUpperCase() == 'SELECT')
+            {
+                //console.log(results.rows[0].order_id);
+                queryResponseArray = results.rows;
+                jsonObjectOutput['error'] = false;
+                jsonObjectOutput['message'] = "Stations Listed";
+                jsonObjectOutput['response'] = queryResponseArray;
+                stausCode = 200;
+            }
+            else
+            {
+                jsonObjectOutput['error'] = true;
+                jsonObjectOutput['message'] = "No stations available/ listed for given lat and long";
+                jsonObjectOutput['response'] = "Error: " + results;
+                stausCode = 200;
+    
+            }
+        }
+        catch(exception)
+        {
+            console.log(`Exception occurred while running '/getDivvyDockingStationsInfo' API: ${exception}`);
+            jsonObjectOutput['error'] = true;
+            jsonObjectOutput['message'] = "Exception occurred";
+            jsonObjectOutput['response'] = exception;
+            stausCode = 400;
+        }
+        finally
+        {
+            response.status(stausCode).json(jsonObjectOutput);
+        }
+    });

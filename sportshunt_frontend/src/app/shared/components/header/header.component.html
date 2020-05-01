@@ -1,9 +1,7 @@
 <ng-progress id="progressBar" [color]="progressBar.currentColor"></ng-progress>
 <ngx-alerts></ngx-alerts>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#"
-    ><i class="fas fa-basketball-ball"></i> Sports Hub</a
-  >
+  <a class="navbar-brand" href=""><i class="fas fa-basketball-ball"></i> SportsHunt</a>
   <button
     class="navbar-toggler"
     type="button"
@@ -43,6 +41,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" *dropdownMenu >
           <a [routerLink]="['reset-password']" class="dropdown-item" routerLinkActive="active"><i class="fas fa-key"></i> Reset Password</a>
+          <a [routerLink]="['myEvents']" class="dropdown-item" routerLinkActive="active"><i class="fas fa-calendar"></i> My Events</a>
           <a (click)="logout();" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
       </li>

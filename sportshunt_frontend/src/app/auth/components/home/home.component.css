@@ -1,0 +1,8 @@
+.landingImg{
+    background-image: url("/assets/images/sportshunt_background.jpg")!important;
+    /* background-color: #cccccc; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 600px;
+    width: 1200px;
+}

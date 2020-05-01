@@ -10,3 +10,12 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* body  {
+  background-image: url("/assets/images/bg_image_1.jpg")!important;
+  background-color: #cccccc;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  opacity: 2;
+} */

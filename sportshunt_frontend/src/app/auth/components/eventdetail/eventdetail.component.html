@@ -22,20 +22,40 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Venue: </label>
-                                <span> {{sportsEvent?.venueName}}, {{sportsEvent?.venueAddress}}</span>
+                                <span> {{sportsEvent?.venueName}}, {{sportsEvent?.venueAddress}}</span> 
+                                <a title="Divvy Stations Nearby" href="/chicagoDivvyStations/{{sportsEvent?.venueName}}/{{sportsEvent?.stadiumLat}}/{{sportsEvent?.stadiumLng}}" class="btn btn-success"><i class="fas fa-bicycle"></i></a>
                             </div>
                             <div class="col-md-12">
                                 <label>Time: </label>
                                 <span> {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}</span>
                             </div>
-                            <div #mapContainer id="map"></div>
+                            <!-- <div #mapContainer id="map"></div> -->
+                            <agm-map [(latitude)]="placeSelected.latitude" [(longitude)]="placeSelected.longitude" [(zoom)]="placeSelected.zoom" [disableDefaultUI]="true" [zoomControl]="true" >
+
+                                <agm-marker
+                                (markerClick)="clickedMarker('placeSelected', 0)"
+                                [latitude]="placeSelected.latitude"
+                                [longitude]="placeSelected.longitude"
+                                [iconUrl] = "{ url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                                              scaledSize: {
+                                                width: 40,
+                                                height: 60
+                                            }}" >
+                                </agm-marker>
+                            </agm-map>
                             <hr>
                             <div class="col-md-12">
-                                Event Reviews:
+                                Event Ratings & Reviews:
                                 <div *ngFor="let eventReview of (eventReviews || [])" class="row reviewsSection">
-                                    <div class="col-md-3 reviewerName">{{eventReview.user_name}}</div>
-                                    <div class="col-md-3 reviewerRating">Rating {{eventReview.event_ratings}}</div>
-                                    <div class="col-md-6 reviewerComment">{{eventReview.review_comment}}</div>
+                                    <div class="col-md-3 reviewerName">{{eventReview?.user_name}}</div>
+                                    <div class="col-md-3 reviewerRating">
+                                        <ngb-rating [readonly]="true" [rate]="eventReview?.event_ratings">
+                                            <ng-template let-fill="fill" let-index="index1">
+                                              <span class="star1" [class.filled]="fill === 100">&#9733;</span>
+                                            </ng-template>
+                                        </ngb-rating>
+                                    </div>
+                                    <div class="col-md-6 reviewerComment">{{eventReview?.review_comment}}</div>
                                     <hr class="reviewDifferencatorLine">
                                 </div>
                             </div>

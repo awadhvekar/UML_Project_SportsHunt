@@ -78,6 +78,23 @@
     );
   }
 
+  addEventReviewApi(model: any) {
+    return this.http.post(this.authUrl + "addEventReview", model).pipe(
+      map((response: any) => {
+       const user = response;
+       /*
+       if(user.error){
+         localStorage.setItem('message', user.message);
+       }
+       else
+       {
+         localStorage.setItem('message', 'Registration Successful!');
+       }
+       */
+      })
+    );
+  }
+
    loggedIn(){
      /*
      const token = localStorage.getItem('token');

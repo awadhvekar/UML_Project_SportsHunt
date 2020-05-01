@@ -6,6 +6,19 @@ Angular Frontend code:
     npm install @auth0/angular-jwt
     npm install @types/googlemaps
 
+    npm install jquery --save
+    npm install datatables.net --save
+    npm install datatables.net-dt --save
+    npm install angular-datatables --save
+    npm install @types/jquery --save-dev
+    npm install @types/datatables.net --save-dev
+    npm install datatables.net-responsive --save
+    npm install datatables.net-responsive-dt --save
+
+    npm install @agm/core
+
+    ng add @ng-bootstrap/ng-bootstrap
+
     ng generate component auth/components/eventdetail
 
 Node Backend code:
