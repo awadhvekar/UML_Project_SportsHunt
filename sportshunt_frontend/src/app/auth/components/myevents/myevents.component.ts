@@ -20,11 +20,13 @@ export class MyeventsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserEventsApi();
-    this.getTickeMasterSportsEvents();
+    this.getRecommendedSportsAndCityApi();
     this.dtOptions = {
       pagingType: 'full_numbers',
       "lengthMenu": [[5], [5]]
     };
+    $(".eventsContent").hide();
+    $("#myEventsTable").hide();
   }
 
   getUserEventsApi(){
@@ -41,13 +43,15 @@ export class MyeventsComponent implements OnInit {
         this.progressBar.setProgressBarSuccess();
         this.progressBar.completeLoading();
         this.alertService.success('All Events fetched!');
+        $("#myEventsTable").show();
       }
       else
       {
         this.progressBar.setProgressBarSuccess();
-        this.userEventsArray.push({"event_name": "No Events present in your profile.","number_of_tickets": "-","total_price": "-", "order_sports_name": "-","order_city": "-","ticketmaster_event_id": null});
+        // this.userEventsArray.push({"event_name": "No Events present in your profile.","number_of_tickets": "-","total_price": "-", "order_sports_name": "-","order_city": "-","ticketmaster_event_id": null});
         this.progressBar.completeLoading();
         this.alertService.warning('No Events present!');
+        $("#myEventsTable").show();
       }
     },
     error => {
@@ -55,19 +59,31 @@ export class MyeventsComponent implements OnInit {
       this.userEventsArray.push({"event_name": "No Events present in your profile.","number_of_tickets": "-","total_price": "-", "order_sports_name": "-","order_city": "-","ticketmaster_event_id": null});
       this.progressBar.completeLoading();
       this.alertService.danger('Sorry! We are unable to fetch events. Please try again after some time.');
+      $("#myEventsTable").show();
     })
   }
 
-  getTickeMasterSportsEvents(){
+  getRecommendedSportsAndCityApi()
+  {
+    return this.http.get("http://localhost:8000/getRecommendedCityAndSports").subscribe(recomendedResponse => {
+      let recommendedSportsName = recomendedResponse["response"][0].recomendedSports;
+      let recommendedCityName = recomendedResponse["response"][1].recomendedCity;
+      this.getTickeMasterSportsEvents(recommendedSportsName, recommendedCityName);
+    },
+    recomendedError => {
+      console.log(recomendedError);
+    });
+  }
+
+  getTickeMasterSportsEvents(sportsName, cityName){
     this.progressBar.startLoading();
     return this.http.get("https://app.ticketmaster.com/discovery/v2/events.json?countryCode=US"
-    + "&classificationName=baseball"
-    + "&city=Chicago" 
+    + "&classificationName=" + sportsName
+    + "&city=" + cityName
     // + "&startDateTime=2020-06-01T00:00:00Z" 
     // + "&endDateTime=2020-07-31T00:00:00Z" 
     + "&sort=date,asc" 
     + "&apikey=bDUhXHdIL0p7OSyxZwsJ6LxLsrAhnIAH").subscribe(response => {
-      //console.log(response["_embedded"].events);
       this.apiResponseData = response;
       if(response.hasOwnProperty("_embedded"))
       {
@@ -83,13 +99,13 @@ export class MyeventsComponent implements OnInit {
       {
         this.progressBar.setProgressBarFailure();
         this.progressBar.completeLoading();
-        // this.alertService.warning('covid-19 causes sports cancellations.');
+        $(".eventsContent").hide();
       }
       else
       {
         this.progressBar.setProgressBarSuccess();
         this.progressBar.completeLoading();
-        // this.alertService.warning('covid-19 causes sports cancellations.');
+        $(".eventsContent").show();
       }
     },
     error => {
@@ -97,6 +113,7 @@ export class MyeventsComponent implements OnInit {
       this.progressBar.setProgressBarFailure();
       this.progressBar.completeLoading();
       this.alertService.danger('Sorry! There is no Sports Event for selected city, dates.');
+      $(".eventsContent").hide();
     }
     );
   }
