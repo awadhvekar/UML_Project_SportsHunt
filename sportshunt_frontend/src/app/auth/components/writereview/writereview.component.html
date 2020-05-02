@@ -23,12 +23,26 @@
                             <div class="col-md-12">
                                 <label>Venue: </label>
                                 <span> {{sportsEvent?.venueName}}, {{sportsEvent?.venueAddress}}</span>
+                                <a title="Divvy Stations Nearby" href="/chicagoDivvyStations/{{sportsEvent?.venueName}}/{{sportsEvent?.stadiumLat}}/{{sportsEvent?.stadiumLng}}" class="btn btn-success"><i class="fas fa-bicycle"></i></a>
                             </div>
                             <div class="col-md-12">
                                 <label>Time: </label>
                                 <span> {{sportsEvent?.dates?.start?.localDate}} {{sportsEvent?.dates?.start?.localTime}}</span>
                             </div>
-                            <div #mapContainer id="map"></div>
+                            <!-- <div #mapContainer id="map"></div> -->
+                            <agm-map [(latitude)]="placeSelected.latitude" [(longitude)]="placeSelected.longitude" [(zoom)]="placeSelected.zoom" [disableDefaultUI]="true" [zoomControl]="true" >
+
+                                <agm-marker
+                                (markerClick)="clickedMarker('placeSelected', 0)"
+                                [latitude]="placeSelected.latitude"
+                                [longitude]="placeSelected.longitude"
+                                [iconUrl] = "{ url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                                              scaledSize: {
+                                                width: 40,
+                                                height: 60
+                                            }}" >
+                                </agm-marker>
+                            </agm-map>
                             <hr>
                             <div class="col-md-12">
                                 Event Rating & Reviews:

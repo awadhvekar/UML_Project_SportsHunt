@@ -128,9 +128,9 @@ export class SearchsportseventComponent implements OnInit {
   getTickeMasterSportsEvents(){
     this.progressBar.startLoading();
     return this.http.get("https://app.ticketmaster.com/discovery/v2/events.json?countryCode=US"
-    + "&classificationName=baseball"
-    + "&city=Chicago" 
-    // + "&startDateTime=2020-06-01T00:00:00Z" 
+    + "&classificationName=sports"
+    // + "&city=Chicago" 
+    + "&startDateTime=2020-06-01T00:00:00Z"
     // + "&endDateTime=2020-07-31T00:00:00Z" 
     + "&sort=date,asc" 
     + "&apikey=bDUhXHdIL0p7OSyxZwsJ6LxLsrAhnIAH").subscribe(response => {

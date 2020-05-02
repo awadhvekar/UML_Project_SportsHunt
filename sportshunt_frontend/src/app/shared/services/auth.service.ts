@@ -121,4 +121,9 @@
    getJwtTokenFromClient(){
      return localStorage.getItem('loggedInUserToken');
    }
+
+  dailyForecast(city:any) {
+    return this.http.get("http://api.openweathermap.org/data/2.5/forecast?q="+ city +"&appid=70a5d26982ce6a2f955b54272bdbae4d")
+    .pipe(map(result => result));
+  }
 }

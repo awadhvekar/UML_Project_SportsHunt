@@ -10,6 +10,7 @@ import { MyeventsComponent } from './components/myevents/myevents.component';
 import { WritereviewComponent } from './components/writereview/writereview.component';
 import { ChicagoDivvyStationsComponent } from './components/chicago-divvy-stations/chicago-divvy-stations.component';
 import { HomeComponent } from './components/home/home.component';
+import { WeatherchartComponent } from './components/weatherchart/weatherchart.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -35,6 +36,11 @@ const routes: Routes = [
   { 
     path: 'chicagoDivvyStations/:stadiumName/:lat/:long',
     component: ChicagoDivvyStationsComponent,
+    canActivate: [AuthguardGuard]
+  },
+  { 
+    path: 'weatherChart/:cityName',
+    component: WeatherchartComponent,
     canActivate: [AuthguardGuard]
   },
   { 

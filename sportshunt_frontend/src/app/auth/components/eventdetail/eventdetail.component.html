@@ -64,17 +64,17 @@
                     <div class="col-md-4">
                         <form #f="ngForm" (ngSubmit)="onSubmit(f)">
                             <div class="form-group">
-                                <!-- <label for="selectTicketPrice">Ticket Price ({{sportsEvent?.priceRanges[0]?.currency}})</label> -->
+                                <label for="selectTicketPrice">Ticket Price ({{sportsEvent?.priceRanges[0]?.currency}})</label>
                                 <select id="selectTicketPrice" name="selectTicketPrice" class="form-control" #selectTicketPrice="ngModel" ngModel required (change)="calculateTotalPrice(selectTicketPrice.value, numberOfTickets.value)"> <!-- [(ngModel)]="selectTicketPrice" (change)="calculateTotalPrice" -->
-                                    <!-- <option>Select Ticket Price</option> -->
+                                    <!-- <option value="null">Select Ticket Price</option> -->
                                     <option value="{{sportsEvent?.priceRanges[0]?.min}}">{{sportsEvent?.priceRanges[0]?.min}}</option>
                                     <option value="{{sportsEvent?.priceRanges[0]?.max}}">{{sportsEvent?.priceRanges[0]?.max}}</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <!-- <label for="selectNumberOfTicket"># of Tickets</label> -->
+                                <label for="selectNumberOfTicket">Number of Tickets</label>
                                 <select id="numberOfTickets" name="numberOfTickets" class="form-control" #numberOfTickets="ngModel" ngModel required (change)="calculateTotalPrice(selectTicketPrice.value, numberOfTickets.value)"> <!-- [(ngModel)]="selectNumberOfTicket" -->
-                                    <!-- <option>Select Number of Tickets</option> -->
+                                    <!-- <option selected>Select Number of Tickets</option> -->
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="5">5</option>
