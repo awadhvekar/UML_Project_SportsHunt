@@ -20,7 +20,10 @@
         <td>{{userEvent.order_city}}</td>
         <td>{{userEvent.number_of_tickets}}</td>
         <td>$ {{userEvent.total_price}}</td>
-        <td><a href="writeReview/{{userEvent.ticketmaster_event_id}}" class="btn btn-sm" title="Write Review"><i class="fas fa-edit"></i></a></td>
+        <td>
+          <a href="writeReview/{{userEvent.ticketmaster_event_id}}" class="btn btn-sm" title="Write Review"><i class="fas fa-edit"></i></a>
+          <a href="weatherChart/{{userEvent.order_city}}" class="btn btn-sm" title="Weather Graph"><i class="fas fa-cloud-sun-rain"></i></a>
+        </td>
       </tr>
     </tbody>
   </table>

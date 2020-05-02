@@ -19,6 +19,8 @@ Angular Frontend code:
 
     ng add @ng-bootstrap/ng-bootstrap
 
+    npm install chart.js --save
+
     ng generate component auth/components/eventdetail
 
 Node Backend code:

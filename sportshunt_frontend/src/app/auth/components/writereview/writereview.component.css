@@ -78,3 +78,8 @@
 .filled.toogood{
     color: darkgreen;
 }
+
+agm-map {
+    height: 200px;
+    width: 100%;
+  }

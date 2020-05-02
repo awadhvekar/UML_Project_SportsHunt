@@ -29,6 +29,7 @@ export class WritereviewComponent implements OnInit, AfterViewInit {
   eventSportsTypeName: any;
   eventReviews: any;
   currentRate = 0;
+  placeSelected: Place;
   @ViewChild('mapContainer', {static: false}) gmap:ElementRef;
   map: google.maps.Map;
   lat = 41.8308761;
@@ -44,6 +45,18 @@ export class WritereviewComponent implements OnInit, AfterViewInit {
     position: this.coordinates,
     map: this.map,
   });
+
+  icon = {
+    url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+    scaledSize: {
+      width: 60,
+      height: 60
+    }
+  }
+
+  clickedMarker(label: string, index: number) {
+    console.log(`clicked the marker: ${label || index}`)
+  }
 
   constructor(private activatedRoute: ActivatedRoute,
     private http: HttpClient,
@@ -159,6 +172,9 @@ export class WritereviewComponent implements OnInit, AfterViewInit {
       // console.log("Lat: " + this.sportsEvent['_embedded'].venues[0].location.latitude);
       this.lat = this.sportsEvent['_embedded'].venues[0].location.latitude;
       this.lng = this.sportsEvent['_embedded'].venues[0].location.longitude;
+      this.sportsEvent['stadiumLat'] = this.sportsEvent['_embedded'].venues[0].location.latitude;
+      this.sportsEvent['stadiumLng'] = this.sportsEvent['_embedded'].venues[0].location.longitude;
+      this.placeSelected = {latitude: Number(this.lat), longitude: Number(this.lng), zoom: 13};
       this.eventCityName = this.sportsEvent['_embedded'].venues[0].city.name;
       this.eventSportsTypeName = this.sportsEvent.classifications[0].genre.name;
       this.eventDateTime = this.sportsEvent.dates.start.dateTime;
@@ -209,4 +225,10 @@ export class WritereviewComponent implements OnInit, AfterViewInit {
    this.totalTicketPrice = this.ticketPrice * this.numberOfTicket;
  }
 
+}
+
+interface Place {
+  latitude: Number;    
+  longitude: Number;
+  zoom: Number;
 }

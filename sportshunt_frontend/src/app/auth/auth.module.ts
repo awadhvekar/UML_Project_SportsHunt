@@ -20,6 +20,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChicagoDivvyStationsComponent } from './components/chicago-divvy-stations/chicago-divvy-stations.component';
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
+import { WeatherchartComponent } from './components/weatherchart/weatherchart.component';
 
 @NgModule({
   declarations: [LoginComponent,
@@ -29,7 +30,8 @@ import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
     EventdetailComponent,
     MyeventsComponent,
     WritereviewComponent,
-    ChicagoDivvyStationsComponent
+    ChicagoDivvyStationsComponent,
+    WeatherchartComponent
   ],
   imports: [CommonModule,
     AuthRoutingModule,
