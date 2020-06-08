@@ -15,6 +15,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const env = require('dotenv').config();
 const cors = require('cors');
+const nodeMailer = require('nodemailer');
 const elasticsearch = require('elasticsearch');
 const {Client} = require('pg');
 
@@ -69,6 +70,34 @@ const pgDbCon = new Client({
 pgDbCon.connect()
 .then( () => {console.log("PostgreSQL database connected successfully!")} )
 .catch( exception => console.log("PostgreSQL DB Connection Exception: " + exception) );
+
+const transporter = nodeMailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'awadhvekar.developer@gmail.com',
+      pass: 'Developer@123'
+    }
+});
+
+var mailOptions = {
+    from: 'youremail@gmail.com',
+    to: 'awadhvekar@gmail.com',
+    // to: 'myfriend@yahoo.com, myotherfriend@yahoo.com',
+    subject: 'Sending Email using Node.js',
+    // html: '<h1>Welcome</h1><p>That was easy!</p>',
+    text: 'That was easy! Node Express Server is running on port 4000.'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+    if (error)
+    {
+      console.log(error);
+    }
+    else 
+    {
+      console.log('Email sent: ' + info.response);
+    }
+});
 
 /* METHOD 1 */
 /*
