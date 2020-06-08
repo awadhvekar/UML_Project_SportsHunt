@@ -30,6 +30,7 @@ Node Backend code:
     npm install cors --save
     npm install jsonwebtoken --save
     npm install dotenv --save
+    npm install nodemailer --save
 
     to create random Secret key to be used in jwt: require ('crypto').randomBytes(64).toString('hex')
 
